@@ -42,7 +42,7 @@ const Dashboard = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (!session?.user && event !== 'INITIAL_SESSION') {
           navigate('/login');
         }
@@ -54,12 +54,12 @@ const Dashboard = () => {
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (!session?.user) {
         navigate('/login');
         return;
       }
-      
+
       await loadDebts();
       setLoading(false);
     };
@@ -71,14 +71,14 @@ const Dashboard = () => {
 
   const loadDebts = async () => {
     if (!user?.id) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('debts')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         toast({
           title: "Erro ao carregar cobranças",
@@ -106,9 +106,9 @@ const Dashboard = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) return;
-    
+
     setSubmitting(true);
-    
+
     try {
       const { data, error } = await supabase
         .from('debts')
@@ -121,7 +121,7 @@ const Dashboard = () => {
         })
         .select()
         .single();
-      
+
       if (error) {
         toast({
           title: "Erro ao criar cobrança",
@@ -137,7 +137,7 @@ const Dashboard = () => {
           pixKey: '',
         });
         setShowForm(false);
-        
+
         toast({
           title: "Cobrança criada! 🎯",
           description: `Agora você pode cobrar ${formData.debtorName} com estilo!`,
@@ -194,8 +194,8 @@ const Dashboard = () => {
               Gerencie suas cobranças e recupere seu dinheiro com humor!
             </p>
           </div>
-          
-          <Button 
+
+          <Button
             onClick={logout}
             variant="outline"
             className="border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
@@ -217,7 +217,7 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-fun text-white border-0">
             <CardContent className="p-6">
               <div className="text-center">
@@ -226,7 +226,7 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-trust text-white border-0">
             <CardContent className="p-6">
               <div className="text-center">
@@ -259,7 +259,7 @@ const Dashboard = () => {
                 Preencha os dados e prepare-se para cobrar com estilo!
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -269,12 +269,12 @@ const Dashboard = () => {
                       id="debtorName"
                       placeholder="Nome do seu amigo devedor"
                       value={formData.debtorName}
-                      onChange={(e) => setFormData({...formData, debtorName: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, debtorName: e.target.value })}
                       required
                       className="border-primary/30 focus:border-primary"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="amount">Valor da Dívida (R$)</Label>
                     <Input
@@ -283,46 +283,46 @@ const Dashboard = () => {
                       step="0.01"
                       placeholder="0.00"
                       value={formData.amount}
-                      onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                       required
                       className="border-primary/30 focus:border-primary"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="startDate">Data de Início</Label>
                     <Input
                       id="startDate"
                       type="date"
                       value={formData.startDate}
-                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                       required
                       className="border-primary/30 focus:border-primary"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="pixKey">Sua Chave PIX</Label>
                     <Input
                       id="pixKey"
                       placeholder="email@exemplo.com ou CPF"
                       value={formData.pixKey}
-                      onChange={(e) => setFormData({...formData, pixKey: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, pixKey: e.target.value })}
                       required
                       className="border-primary/30 focus:border-primary"
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3 pt-4">
-                  <Button 
+                  <Button
                     type="submit"
                     disabled={submitting}
                     className="bg-gradient-money hover:opacity-90 text-white flex-1 disabled:opacity-50"
                   >
                     {submitting ? '⏳ Criando...' : '🎯 Criar Cobrança'}
                   </Button>
-                  <Button 
+                  <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowForm(false)}
@@ -345,13 +345,16 @@ const Dashboard = () => {
                 Clique em "Copiar Link" para enviar a cobrança para seus amigos!
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent>
               <div className="space-y-4">
                 {debts.map((debt) => (
-                  <div key={debt.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                  <div
+                    key={debt.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
                     <div className="flex-1">
-                     <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
                         <h3 className="font-semibold text-lg">{debt.debtor_name}</h3>
                         <span className="text-2xl font-bold text-debt pulse-debt">
                           R$ {Number(debt.amount).toFixed(2)}
@@ -361,7 +364,7 @@ const Dashboard = () => {
                         Desde: {new Date(debt.start_date).toLocaleDateString('pt-BR')}
                       </p>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <Button
                         onClick={() => copyDebtLink(debt.id, debt.debtor_name)}
@@ -370,12 +373,43 @@ const Dashboard = () => {
                         <Copy className="w-4 h-4 mr-2" />
                         Copiar Link
                       </Button>
+
                       <Button
                         onClick={() => window.open(`/debt?debtId=${debt.id}`, '_blank')}
                         variant="outline"
                         className="border-trust/30 text-trust hover:bg-trust hover:text-trust-foreground"
                       >
                         <ExternalLink className="w-4 h-4" />
+                      </Button>
+
+                      {/* 🚨 Botão de Excluir */}
+                      <Button
+                        onClick={async () => {
+                          const { error } = await supabase
+                            .from('debts')
+                            .delete()
+                            .eq('id', debt.id);
+
+                          if (error) {
+                            toast({
+                              title: "Erro ao excluir cobrança",
+                              description: error.message,
+                              variant: "destructive",
+                            });
+                          } else {
+                            // Atualiza lista removendo a cobrança localmente
+                            setDebts(debts.filter(d => d.id !== debt.id));
+
+                            toast({
+                              title: "Cobrança excluída 🗑️",
+                              description: `A cobrança de ${debt.debtor_name} foi removida.`,
+                            });
+                          }
+                        }}
+                        variant="destructive"
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Excluir
                       </Button>
                     </div>
                   </div>
@@ -384,6 +418,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         )}
+
 
         {debts.length === 0 && !showForm && (
           <Card className="text-center p-12">
